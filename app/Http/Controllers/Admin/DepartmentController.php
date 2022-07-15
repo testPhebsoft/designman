@@ -24,6 +24,10 @@ class DepartmentController extends Controller
 
         $departments = Department::with(['department_head'])->get();
 
+        foreach($departments as $department){
+            $department->no_users = User::where('department_id',$department->id)->count();
+        }  
+
         return view('admin.departments.index', compact('departments'));
     }
 

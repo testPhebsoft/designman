@@ -41,6 +41,9 @@
                             {{ trans('cruds.department.fields.department_assets') }}
                         </th>
                         <th>
+                            {{ trans('cruds.department.fields.department_count_users') }}                        
+                        </th>
+                        <th>
                             &nbsp;
                         </th>
                     </tr>
@@ -68,6 +71,9 @@
                             </td>
                             <td>
                                 {{ $department->department_assets ?? '' }}
+                            </td>                            
+                            <td>
+                                {{ $department->no_users }}
                             </td>
                             <td>
                                 @can('department_show')

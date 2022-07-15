@@ -131,6 +131,7 @@ return [
             'roles_responsibilities_helper' => ' ',
             'department_assets'             => 'Assets',
             'department_assets_helper'      => ' ',
+            'department_count_users'      => 'Number of Employees',
         ],
     ],
     'client' => [
