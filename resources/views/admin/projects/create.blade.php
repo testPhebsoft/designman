@@ -99,7 +99,11 @@
             </div>
             <div class="form-group">
                 <label for="employees_assigned">{{ trans('cruds.project.fields.employees_assigned') }}</label>
-                <input class="form-control {{ $errors->has('employees_assigned') ? 'is-invalid' : '' }}" type="text" name="employees_assigned" id="employees_assigned" value="{{ old('employees_assigned', '') }}">
+                <select multiple class="form-control select2 select2_multiple {{ $errors->has('employees_assigned') ? 'is-invalid' : '' }}" name="employees_assigned[]" id="employees_assigned">
+                    @foreach($employees as $id => $employee)
+                        <option value="{{ $id }}" {{ old('employees_assigned') == $id ? 'selected' : '' }}>{{ $employee }}</option>
+                    @endforeach
+                </select>                
                 @if($errors->has('employees_assigned'))
                     <span class="text-danger">{{ $errors->first('employees_assigned') }}</span>
                 @endif
@@ -132,7 +136,11 @@
             </div>
             <div class="form-group">
                 <label for="venture_firm">{{ trans('cruds.project.fields.venture_firm') }}</label>
-                <input class="form-control {{ $errors->has('venture_firm') ? 'is-invalid' : '' }}" type="text" name="venture_firm" id="venture_firm" value="{{ old('venture_firm', '') }}">
+                <select multiple class="form-control select2 select2_multiple {{ $errors->has('venture_firm') ? 'is-invalid' : '' }}" name="venture_firm[]" id="venture_firm">
+                    @foreach($venture_firms as $id => $venture_firm)
+                        <option value="{{ $id }}" {{ old('venture_firm') == $id ? 'selected' : '' }}>{{ $venture_firm }}</option>
+                    @endforeach
+                </select>
                 @if($errors->has('venture_firm'))
                     <span class="text-danger">{{ $errors->first('venture_firm') }}</span>
                 @endif
@@ -140,7 +148,11 @@
             </div>
             <div class="form-group">
                 <label for="sub_contractors">{{ trans('cruds.project.fields.sub_contractors') }}</label>
-                <input class="form-control {{ $errors->has('sub_contractors') ? 'is-invalid' : '' }}" type="text" name="sub_contractors" id="sub_contractors" value="{{ old('sub_contractors', '') }}">
+                <select multiple class="form-control select2 select2_multiple {{ $errors->has('sub_contractors') ? 'is-invalid' : '' }}" name="sub_contractors[]" id="sub_contractors">
+                    @foreach($subcontractors as $id => $subcontractor)
+                        <option value="{{ $id }}" {{ old('subcontractor') == $id ? 'selected' : '' }}>{{ $subcontractor }}</option>
+                    @endforeach
+                </select>                
                 @if($errors->has('sub_contractors'))
                     <span class="text-danger">{{ $errors->first('sub_contractors') }}</span>
                 @endif
@@ -187,6 +199,16 @@
 @section('scripts')
 <script>
     $(document).ready(function () {
+
+        $(".select2_multiple").select2({
+            placeholder: "Please Select",
+            allowClear: true
+        });
+
+        $(document).on('change','.select2_multiple',function(){
+            console.log('seleted are ',$(this).val());
+        })
+
   function SimpleUploadAdapter(editor) {
     editor.plugins.get('FileRepository').createUploadAdapter = function(loader) {
       return {

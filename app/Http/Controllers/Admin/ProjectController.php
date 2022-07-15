@@ -15,6 +15,10 @@ use Gate;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\JointVentureFirm;
+use App\Models\Subcontractor;
+use App\Models\Role;
+use DB;
 
 class ProjectController extends Controller
 {
@@ -26,25 +30,50 @@ class ProjectController extends Controller
 
         $projects = Project::with(['client', 'category', 'project_head', 'media'])->get();
 
+        foreach($projects as $project){
+            $project = $this->ExtractMultipleFieldsData($project);            
+        }       
+
         return view('admin.projects.index', compact('projects'));
     }
 
     public function create()
     {
-        abort_if(Gate::denies('project_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('project_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');        
 
         $clients = Client::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $categories = ProjectCategory::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $project_heads = User::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $project_heads = User::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');        
 
-        return view('admin.projects.create', compact('categories', 'clients', 'project_heads'));
+        $venture_firms = JointVentureFirm::pluck('firm_name', 'id');        
+
+        $subcontractors = Subcontractor::pluck('name', 'id');  
+
+        $emp_role_id = Role::where('title','LIKE','%ad%')->pluck('id')->first();
+        $employees = array();
+        if($emp_role_id)
+        {
+            $emp_ids = DB::table('role_user')->where('role_id', $emp_role_id)->pluck('user_id');            
+            if($emp_ids)
+            {
+                $employees = User::whereIn('id',$emp_ids)->pluck('name', 'id');
+            }            
+        }               
+
+        return view('admin.projects.create', compact('categories', 'clients', 'project_heads','venture_firms','subcontractors','employees'));
     }
 
     public function store(StoreProjectRequest $request)
-    {
-        $project = Project::create($request->all());
+    { 
+        $data = $request->except('sub_contractors','employees_assigned','venture_firm');
+        
+        $data['sub_contractors'] = implode(',',$request->sub_contractors);
+        $data['employees_assigned'] = implode(',',$request->employees_assigned);
+        $data['venture_firm'] = implode(',',$request->venture_firm);
+        
+        $project = Project::create($data);
 
         if ($request->input('agreement_atachment', false)) {
             $project->addMedia(storage_path('tmp/uploads/' . basename($request->input('agreement_atachment'))))->toMediaCollection('agreement_atachment');
@@ -94,7 +123,11 @@ class ProjectController extends Controller
     {
         abort_if(Gate::denies('project_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+        $project = $this->ExtractMultipleFieldsData($project);
+
         $project->load('client', 'category', 'project_head');
+
+        
 
         return view('admin.projects.show', compact('project'));
     }
@@ -126,4 +159,42 @@ class ProjectController extends Controller
 
         return response()->json(['id' => $media->id, 'url' => $media->getUrl()], Response::HTTP_CREATED);
     }
+
+    //this is used to get subcordinators, assigned users, venture firms names 
+    public function ExtractMultipleFieldsData($project){
+        $venture_firm_ids = explode(',',$project->venture_firm);
+        $sub_contractors_ids = explode(',',$project->sub_contractors);
+        $employees_assigned_ids = explode(',',$project->employees_assigned);     
+        
+        $venture_firms = JointVentureFirm::whereIn('id',$venture_firm_ids)->pluck('firm_name');
+        $project->venture_firm = '';
+        foreach($venture_firms as $key=>$venture_firm){
+            $project->venture_firm .= $venture_firm; 
+            if(isset($venture_firms[$key+1]))
+            {
+                $project->venture_firm .= ', ';
+            }    
+        }
+
+        $sub_contractors = Subcontractor::whereIn('id',$sub_contractors_ids)->pluck('name');
+        $project->sub_contractors = '';
+        foreach($sub_contractors as $key=>$sub_contractor){
+            $project->sub_contractors .= $sub_contractor;
+            if(isset($sub_contractors[$key+1]))
+            {
+                $project->sub_contractors .= ', ';
+            }
+        }
+
+        $employees_assigned = User::whereIn('id',$employees_assigned_ids)->pluck('name');
+        $project->employees_assigned = '';
+        foreach($employees_assigned as $key=>$employee){
+            $project->employees_assigned .= $employee;
+            if(isset($employees_assigned[$key+1]))
+            {
+                $project->employees_assigned .= ', ';
+            }
+        }
+        return $project;
+    }//end of ExtractMultipleFieldsData
 }

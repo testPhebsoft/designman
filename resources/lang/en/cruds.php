@@ -222,7 +222,7 @@ return [
             'project_head_helper'        => ' ',
             'handled_as'                 => 'Handled As',
             'handled_as_helper'          => ' ',
-            'venture_firm'               => 'Join Venture Firm(s) Name',
+            'venture_firm'               => 'Joint Venture Firm(s)',
             'venture_firm_helper'        => ' ',
             'sub_contractors'            => 'Sub-Contractor(s) Name',
             'sub_contractors_helper'     => ' ',

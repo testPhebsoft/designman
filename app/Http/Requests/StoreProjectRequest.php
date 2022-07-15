@@ -41,19 +41,16 @@ class StoreProjectRequest extends FormRequest
                 'string',
                 'nullable',
             ],
-            'employees_assigned' => [
-                'string',
+            'employees_assigned' => [                
                 'nullable',
             ],
             'handled_as' => [
                 'required',
             ],
-            'venture_firm' => [
-                'string',
+            'venture_firm' => [                
                 'nullable',
             ],
-            'sub_contractors' => [
-                'string',
+            'sub_contractors' => [                
                 'nullable',
             ],
             'signing_date' => [
