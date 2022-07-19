@@ -28,6 +28,7 @@ class StoreDepartmentRequest extends FormRequest
             'department_code' => [
                 'string',
                 'required',
+                'unique:departments'
             ],
         ];
     }

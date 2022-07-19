@@ -1,4 +1,30 @@
 @extends('layouts.admin')
+
+@section('styles')
+<style>
+    .add_education_btn{
+        /* margin-top: 35px; */
+    }
+    .education_remove_btn{
+        margin-top: 20px;
+    }
+
+    .add_employment_btn{
+        /* margin-top: 35px; */
+    }
+    .employment_remove_btn{
+        margin-top: 20px;
+    }
+
+    .add_promotion_btn{
+        /* margin-top: 35px; */
+    }
+    .promotion_remove_btn{
+        margin-top: 20px;
+    }
+</style>
+@endsection
+
 @section('content')
 
 <div class="card">
@@ -159,6 +185,253 @@
                 @endif
                 <span class="help-block">{{ trans('cruds.user.fields.blood_group_helper') }}</span>
             </div>
+
+            <hr>
+             <!--this is for education-->
+             <div class="form-group">
+                <fieldset>
+                    <legend>Education</legend>
+                    <div class="education_inputs">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="required" for="blood_group">{{ trans('cruds.user.fields.name_of_degree') }}</label>                                
+                            </div> 
+                            <div class="col-md-3">
+                                <label class="required" for="blood_group">{{ trans('cruds.user.fields.educational_institute') }}</label>                                
+                            </div> 
+                            <div class="col-md-3">
+                                <label class="required" for="blood_group">{{ trans('cruds.user.fields.degree_duration') }}</label>                                
+                            </div> 
+                            <div class="col-md-2">
+                                <label class="" for="blood_group">{{ trans('cruds.user.fields.degree_attachment') }}</label>                                
+                            </div>   
+                            <div class="col-md-1">                                
+                            </div>        
+                        </div> 
+
+                        @if(count($educations) == 0)
+                            <div class="row">
+                                <div class="col-md-3">                                
+                                    <input class="form-control" placeholder="Degree Name" type="text" name="education[0][degree_name]" required>
+                                </div> 
+                                <div class="col-md-3">                                
+                                    <input class="form-control"  placeholder="Institute Name" type="text" name="education[0][educational_institute]" required>
+                                </div> 
+                                <div class="col-md-3">                                
+                                    <input class="form-control" placeholder="Duration" type="text" name="education[0][degree_duration]" required>
+                                </div> 
+                                <div class="col-md-2">                                
+                                    <input class="form-control" type="file" name="education[0][degree_attachment]">
+                                </div>   
+                                <div class="col-md-1">
+                                    <button type="button" class="btn btn-sm btn-success add_education_btn"><i class="fa fa-plus"></i></button>
+                                </div>        
+                            </div> 
+                        @endif 
+
+                        @foreach($educations as $key=>$education)
+                            @if($key == 0)
+                            <div class="row">    
+                            @else
+                            <div class="row" data-education_no="{{$key}}">
+                            @endif                            
+                                <div class="col-md-3">                                
+                                    <input class="form-control" value="{{$education->degree_name}}" placeholder="Degree Name" type="text" name="education[{{$key}}][degree_name]" required>
+                                </div> 
+                                <div class="col-md-3">                                
+                                    <input class="form-control" value="{{$education->educational_institute}}" placeholder="Institute Name" type="text" name="education[{{$key}}][educational_institute]" required>
+                                </div> 
+                                <div class="col-md-3">                                
+                                    <input class="form-control" value="{{$education->degree_duration}}" placeholder="Duration" type="text" name="education[{{$key}}][degree_duration]" required>
+                                </div> 
+                                <div class="col-md-2">                                
+                                    <input class="form-control" type="file" name="education[{{$key}}][degree_attachment]">
+                                </div>   
+                                <div class="col-md-1">
+                                    @if($key == 0)
+                                    <button type="button" class="btn btn-sm btn-success add_education_btn"><i class="fa fa-plus"></i></button>
+                                    @else
+                                    <button type="button" data-remove_btn="{{$key}}" class="btn btn-sm btn-danger education_remove_btn" ><i class="fa fa-times"></i></button>
+                                    @endif
+                                </div>        
+                            </div> 
+                        @endforeach
+
+                    </div>
+                </fieldset>                 
+            </div>
+            <!--this is for education ends here-->
+            <hr>
+
+            <!--this is for promotion history-->
+            <div class="form-group">
+                <fieldset>
+                    <legend>Promotion History</legend>
+                    <div class="promotion_inputs">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <label class="required" for="blood_group">{{ trans('cruds.user.fields.promotion_date') }}</label>                               
+                            </div> 
+                            <div class="col-md-6">
+                                <label class="required" for="blood_group">{{ trans('cruds.user.fields.promotion_designation') }}</label>                                
+                            </div>                            
+                            <div class="col-md-1">
+                                <!-- <button type="button" class="btn btn-sm btn-success add_promotion_btn"><i class="fa fa-plus"></i></button> -->
+                            </div>        
+                        </div>   
+
+                        @if(count($promotions) == 0)                        
+                        <div class="row">
+                            <div class="col-md-5">                                
+                                <input class="form-control date" placeholder="Promotion Date" type="text" name="promotion[0][promotion_date]">
+                            </div> 
+                            <div class="col-md-6">                                
+                                <input class="form-control"  placeholder="Designation" type="text" name="promotion[0][designation]">
+                            </div>                            
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-sm btn-success add_promotion_btn"><i class="fa fa-plus"></i></button>
+                            </div>        
+                        </div>   
+                        @endif
+
+                        @foreach($promotions as $key=>$promotion)
+                        @if($key == 0)
+                        <div class="row">
+                        @else
+                        <div class="row" data-promotion_no="{{$key}}">
+                        @endif                        
+                            <div class="col-md-5">                                
+                                <input class="form-control date" value="{{$promotion->promotion_date}}" placeholder="Promotion Date" type="text" name="promotion[0][promotion_date]">
+                            </div> 
+                            <div class="col-md-6">                                
+                                <input class="form-control" value="{{$promotion->designation}}" placeholder="Designation" type="text" name="promotion[0][designation]">
+                            </div>                            
+                            <div class="col-md-1">
+                                @if($key == 0)
+                                <button type="button" class="btn btn-sm btn-success add_promotion_btn"><i class="fa fa-plus"></i></button>
+                                @else
+                                <button type="button" data-promotion_remove_btn="{{$key}}" class="btn btn-sm btn-danger promotion_remove_btn" ><i class="fa fa-times"></i></button>
+                                @endif
+                            </div>        
+                        </div>
+                        @endforeach
+
+                    </div>
+                </fieldset>                 
+            </div>
+            <!--this is for employement ends here-->
+            <hr>
+
+
+            <!--this is for employement-->
+            <div class="form-group">
+                <fieldset>
+                    <legend>Employment Record</legend>
+                    <div class="employment_inputs">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="required" for="blood_group">{{ trans('cruds.user.fields.employement_company_name') }}</label>                                
+                            </div> 
+                            <div class="col-md-3">
+                                <label class="required" for="blood_group">{{ trans('cruds.user.fields.employement_designation') }}</label>                                
+                            </div> 
+                            <div class="col-md-2">
+                                <label class="required" for="blood_group">{{ trans('cruds.user.fields.employement_start_date') }}</label>                                
+                            </div> 
+                            <div class="col-md-2">
+                                <label class="" for="blood_group">{{ trans('cruds.user.fields.employement_end_date') }}</label>                                
+                            </div>                                    
+                        </div>
+
+                        @if(count($employments) == 0)                                      
+                            <div class="row" >                           
+                                <div class="col-md-4">                                
+                                    <input class="form-control" placeholder="Company Name" type="text" name="employment[0][company_name]" required>
+                                </div> 
+                                <div class="col-md-3">                                
+                                    <input class="form-control"  placeholder="Designation" type="text" name="employment[0][designation]" required>
+                                </div> 
+                                <div class="col-md-2">                                
+                                    <input class="form-control date" placeholder="Start Date" type="text" name="employment[0][start_date]" required>
+                                </div> 
+                                <div class="col-md-2">                                
+                                    <input class="form-control date" placeholder="End Date" type="text" name="employment[0][end_date]" required>
+                                </div>   
+                                <div class="col-md-1">                                    
+                                    <button type="button" class="btn btn-sm btn-success add_employment_btn"><i class="fa fa-plus"></i></button>
+                                </div>                             
+                            </div> 
+                        @endif
+                        
+
+                        @foreach($employments as $key=>$employment)   
+                             @if($key == 0)
+                            <div class="row">    
+                            @else
+                            <div class="row" data-employment_no="{{$key}}">
+                            @endif                                                                               
+                                <div class="col-md-4">                                
+                                    <input class="form-control" value="{{$employment->company_name}}" placeholder="Company Name" type="text" name="employment[{{$key}}][company_name]" required>
+                                </div> 
+                                <div class="col-md-3">                                
+                                    <input class="form-control" value="{{$employment->designation}}" placeholder="Designation" type="text" name="employment[{{$key}}][designation]" required>
+                                </div> 
+                                <div class="col-md-2">                                
+                                    <input class="form-control date" value="{{$employment->start_date}}" placeholder="Start Date" type="text" name="employment[{{$key}}][start_date]" required>
+                                </div> 
+                                <div class="col-md-2">                                
+                                    <input class="form-control date" value="{{$employment->end_date}}" placeholder="End Date" type="text" name="employment[{{$key}}][end_date]" required>
+                                </div>   
+                                <div class="col-md-1">                                    
+                                    @if($key == 0)
+                                    <button type="button" class="btn btn-sm btn-success add_employment_btn"><i class="fa fa-plus"></i></button>
+                                    @else
+                                    <button type="button" data-remove_btn="{{$key}}" class="btn btn-sm btn-danger employment_remove_btn" ><i class="fa fa-times"></i></button>
+                                    @endif
+                                </div>                             
+                            </div> 
+                        @endforeach 
+
+                    </div>
+                </fieldset>                 
+            </div>
+            <!--this is for employement ends here-->
+            <hr>
+
+             <!--this is for languages-->
+             <div class="form-group">
+                <fieldset>
+                    <legend>Languages</legend>                    
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="required" for="">{{ trans('cruds.user.fields.language_reading') }}</label>
+                                <select class="form-control select2" id="language_reading" data-placeholder="Select Reading Languages" name="language_reading[]" multiple required>                                                                        
+                                    @foreach($languages as $id => $language)
+                                        <option value="{{ $id }}" <?= in_array($id, $reading_languages)? 'selected':'' ?> >{{ $language }}</option>
+                                    @endforeach
+                                </select>                                
+                            </div> 
+                            <div class="col-md-4">
+                                <label class="required" for="blood_group">{{ trans('cruds.user.fields.language_writing') }}</label>
+                                <select class="form-control select2" id="language_writing" data-placeholder="Select Writing Languages" name="language_writing[]" multiple required>                                                                        
+                                    @foreach($languages as $id => $language)
+                                        <option value="{{ $id }}" <?= in_array($id, $writing_languages)? 'selected':'' ?>>{{ $language }}</option>
+                                    @endforeach
+                                </select>
+                            </div> 
+                            <div class="col-md-4">
+                                <label class="required" for="blood_group">{{ trans('cruds.user.fields.language_speaking') }}</label>
+                                <select class="form-control select2" id="language_speaking" data-placeholder="Select Speaking Languages" name="language_speaking[]" multiple required>                                                                        
+                                    @foreach($languages as $id => $language)
+                                        <option value="{{ $id }}" <?= in_array($id, $speaking_languages)? 'selected':'' ?>>{{ $language }}</option>
+                                    @endforeach
+                                </select>
+                            </div>                                  
+                        </div>                        
+                </fieldset>                 
+            </div>
+            <!--this is for languages ends here-->
+            <hr>
             <div class="form-group">
                 <label>{{ trans('cruds.user.fields.job_status') }}</label>
                 <select class="form-control {{ $errors->has('job_status') ? 'is-invalid' : '' }}" name="job_status" id="job_status">
@@ -191,11 +464,11 @@
             </div>
             <div class="form-group">
                 <label for="country_work_experience">{{ trans('cruds.user.fields.country_work_experience') }}</label>
-                <textarea class="form-control {{ $errors->has('country_work_experience') ? 'is-invalid' : '' }}" name="country_work_experience" id="country_work_experience">{{ old('country_work_experience', $user->country_work_experience) }}</textarea>
-                @if($errors->has('country_work_experience'))
-                    <span class="text-danger">{{ $errors->first('country_work_experience') }}</span>
-                @endif
-                <span class="help-block">{{ trans('cruds.user.fields.country_work_experience_helper') }}</span>
+                <select class="form-control select2" data-placeholder="Select Work Countries" name="country_work_experience[]" id="country_work_experience" multiple>                    
+                    @foreach($countries as $key => $country)
+                        <option value="{{ $key }}" <?= in_array($key, $selected_countries)? 'selected':'' ?>>{{ $country }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="form-group">
                 <label class="required" for="account_title">{{ trans('cruds.user.fields.account_title') }}</label>
@@ -243,6 +516,134 @@
 @endsection
 
 @section('scripts')
+
+
+@section('scripts')
+
+<script>
+
+    var count = <?=count($educations)?>;
+    var employment_count = <?=count($employments)?>;
+    var promotion_count = <?=count($promotions)?>;
+
+    $(document).on('click','.add_education_btn',function(){
+        var html = getEducationFieldsHTML();
+
+        $('.education_inputs').append(html);
+        count++;
+
+    });
+
+    $(document).on('click','.add_employment_btn',function(){
+        var html = getEmploymentFieldsHTML();
+
+        $('.employment_inputs').append(html);
+        employment_count++;
+
+    });
+
+    $(document).on('click','.add_promotion_btn',function(){
+        var html = getPromotionFieldsHTML();
+
+        $('.promotion_inputs').append(html);
+        promotion_count++;
+    });
+
+    
+
+    
+
+    $(document).on('click','.education_remove_btn',function(){
+        var div_id = $(this).attr('data-remove_btn');       
+
+        var remove = 'div[data-education_no="'+div_id+'"]';
+
+        $(remove).remove();
+
+        console.log($(this).attr('data-remove_btn'));
+    });  
+
+
+    $(document).on('click','.employment_remove_btn',function(){
+        var div_id = $(this).attr('data-employment_remove_btn');       
+
+        var remove = 'div[data-employment_no="'+div_id+'"]';
+
+        $(remove).remove();
+        
+    });  
+
+
+    $(document).on('click','.promotion_remove_btn',function(){
+        var div_id = $(this).attr('data-promotion_remove_btn');       
+
+        var remove = 'div[data-promotion_no="'+div_id+'"]';
+
+        $(remove).remove();
+        
+    });  
+
+    function getPromotionFieldsHTML(){
+        var html = ' <div class="row" data-promotion_no="'+promotion_count+'">'+
+                        '<div class="col-md-5 pt-3">'+                               
+                            '<input class="form-control date" placeholder="Promotion Date" type="text" name="promotion['+promotion_count+'][promotion_date]" required>'+
+                        '</div>'+
+                        '<div class="col-md-6 pt-3">'+                                
+                            '<input class="form-control"  placeholder="Designation" type="text" name="promotion['+promotion_count+'][designation]" required>'+
+                        '</div> '+                        
+                        '<div class="col-md-1">'+
+                            '<button type="button" data-promotion_remove_btn="'+promotion_count+'" class="btn btn-sm btn-danger promotion_remove_btn" ><i class="fa fa-times"></i></button>'+
+                        '</div>        '+
+                    '</div>   ';
+        return html;
+    }
+
+
+    function getEmploymentFieldsHTML(){
+        var html = ' <div class="row" data-employment_no="'+employment_count+'">'+
+                        '<div class="col-md-4 pt-3">'+                               
+                            '<input class="form-control" placeholder="Company Name" type="text" name="employment['+employment_count+'][company_name]" required>'+
+                        '</div>'+
+                        '<div class="col-md-3 pt-3">'+                                
+                            '<input class="form-control"  placeholder="Designation" type="text" name="employment['+employment_count+'][designation]" required>'+
+                        '</div> '+
+                        '<div class="col-md-2 pt-3">'+                                
+                            '<input class="form-control date" placeholder="Start Date" type="text" name="employment['+employment_count+'][start_date]" required>'+
+                        '</div> '+
+                        '<div class="col-md-2 pt-3">'+                                
+                            '<input class="form-control date" placeholder="End Date" type="text" name="employment['+employment_count+'][end_date]" required>'+
+                        '</div>   '+
+                        '<div class="col-md-1">'+
+                            '<button type="button" data-employment_remove_btn="'+employment_count+'" class="btn btn-sm btn-danger employment_remove_btn" ><i class="fa fa-times"></i></button>'+
+                        '</div>        '+
+                    '</div>   ';
+        return html;
+    }
+
+    function getEducationFieldsHTML(){
+        var html = ' <div class="row" data-education_no="'+count+'">'+
+                        '<div class="col-md-3 pt-3">'+                               
+                            '<input class="form-control" type="text" placeholder="Degree Name" name="education['+count+'][degree_name]" id="" value="" required>'+
+                        '</div>'+
+                        '<div class="col-md-3 pt-3">'+                                
+                            '<input class="form-control" type="text" placeholder="Institute Name" name="education['+count+'][educational_institute]" id="" value="" required>'+
+                        '</div> '+
+                        '<div class="col-md-3 pt-3">'+                                
+                            '<input class="form-control" type="text" placeholder="Duration" name="education['+count+'][degree_duration]" id="" value="" required>'+
+                        '</div> '+
+                        '<div class="col-md-2 pt-3">'+                                
+                            '<input class="form-control" type="file" name="education['+count+'][degree_attachment]" id="" value="">'+
+                        '</div>   '+
+                        '<div class="col-md-1">'+
+                            '<button type="button" data-remove_btn="'+count+'" class="btn btn-sm btn-danger education_remove_btn" ><i class="fa fa-times"></i></button>'+
+                        '</div>        '+
+                    '</div>   ';
+        return html;
+    }
+
+</script>
+
+
 <script>
     Dropzone.options.imageDropzone = {
     url: '{{ route('admin.users.storeMedia') }}',

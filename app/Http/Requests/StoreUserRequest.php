@@ -42,6 +42,7 @@ class StoreUserRequest extends FormRequest
             'employee_code' => [
                 'string',
                 'required',
+                'unique:users'
             ],
             'father_name' => [
                 'string',

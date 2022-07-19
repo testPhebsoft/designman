@@ -28,6 +28,7 @@ class UpdateDepartmentRequest extends FormRequest
             'department_code' => [
                 'string',
                 'required',
+                'unique:departments,department_code,' . request()->route('department')->id,
             ],
         ];
     }

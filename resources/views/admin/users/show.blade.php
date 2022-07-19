@@ -201,6 +201,34 @@
                             {{ $user->country_work_experience }}
                         </td>
                     </tr>
+
+                    <tr>
+                        <th>
+                            {{ trans('cruds.user.fields.language_reading') }}
+                        </th>
+                        <td>
+                            <strong>  {{ $user->language_reading }} </strong>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            {{ trans('cruds.user.fields.language_writing') }}
+                        </th>
+                        <td>
+                            <strong>  {{ $user->language_writing }} </strong>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            {{ trans('cruds.user.fields.language_speaking') }}
+                        </th>
+                        <td>
+                            <strong>  {{ $user->language_speaking }} </strong>
+                        </td>
+                    </tr>
+
                     <tr>
                         <th>
                             {{ trans('cruds.user.fields.account_title') }}
@@ -231,6 +259,14 @@
                         </th>
                         <td>
                             {{ $user->bank_branch }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            {{ trans('cruds.user.fields.job_duration') }}
+                        </th>
+                        <td>
+                            {{ $user->job_duration }}
                         </td>
                     </tr>
                 </tbody>

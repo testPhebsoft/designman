@@ -14,6 +14,12 @@ use Gate;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
+use DateTime;
+use App\Models\Language;
+use App\Models\Education;
+use App\Models\Employment;
+use App\Models\Promotion;
+use App\Models\Country;
 
 class UsersController extends Controller
 {
@@ -25,6 +31,10 @@ class UsersController extends Controller
 
         $users = User::with(['department', 'roles', 'media'])->get();
 
+        foreach($users as $user){
+            $user->country_work_experience = $this->getCountriesName($user->country_work_experience);
+        }
+
         return view('admin.users.index', compact('users'));
     }
 
@@ -35,16 +45,83 @@ class UsersController extends Controller
         $departments = Department::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $roles = Role::pluck('title', 'id');
+        
+        $languages = Language::pluck('language_name', 'id');        
 
-        return view('admin.users.create', compact('departments', 'roles'));
+        $countries = Country::pluck('name', 'id');   
+
+        return view('admin.users.create', compact('departments', 'roles','languages','countries'));
     }
 
     public function store(StoreUserRequest $request)
-    {
-        $user = User::create($request->all());
+    {    
+        $data = $request->all();
+        $data['language_reading'] = implode(',',$request->language_reading);
+        $data['language_writing'] = implode(',',$request->language_writing);
+        $data['language_speaking'] = implode(',',$request->language_speaking);   
+
+        $data['country_work_experience'] = implode(',',$data['country_work_experience']);
+        
+        $educations =  $data['education'];
+        $employments = $data['employment'];
+        $promotions = $data['promotion'];        
+        unset($data['education']);
+        unset($data['employment']);
+        unset($data['promotion']);
+
+        $user = User::create($data);
         $user->roles()->sync($request->input('roles', []));
         if ($request->input('image', false)) {
             $user->addMedia(storage_path('tmp/uploads/' . basename($request->input('image'))))->toMediaCollection('image');
+        }
+        
+        //employments
+        if($employments)
+        {
+            foreach($employments as $employment)
+            {
+                $data = array(
+                    "user_id" => $user->id,
+                    "company_name" => $employment['company_name'],
+                    "designation" => $employment['designation'],
+                    "start_date" => $employment['start_date'],
+                    "end_date" => $employment['end_date'],
+                );
+                $emp = Employment::create($data);                
+            }
+        }
+
+        //promotions
+        if($promotions)
+        {
+            foreach($promotions as $promotion)
+            {
+                $data = array(
+                    "user_id" => $user->id,
+                    "promotion_date" => $promotion['promotion_date'],
+                    "designation" => $promotion['designation'],
+                );
+                $pro = Promotion::create($data);                
+            }
+        }
+
+        //education
+        if($educations)
+        {
+            foreach($educations as $education)
+            {
+                $data = array(
+                    "user_id" => $user->id,
+                    "degree_name" => $education['degree_name'],
+                    "educational_institute" => $education['educational_institute'],
+                    "degree_duration" => $education['degree_duration'],
+                );
+                $edu = Education::create($data);
+                if(isset($education['degree_attachment']))
+                {
+                    $user->addMedia(storage_path('tmp/uploads/' . basename($education['degree_attachment'])))->toMediaCollection('degree_attachment');
+                }
+            }
         }
 
         if ($request->input('code_membership_attachment', false)) {
@@ -66,14 +143,42 @@ class UsersController extends Controller
 
         $roles = Role::pluck('title', 'id');
 
+        $countries = Country::pluck('name', 'id');
+
+        $selected_countries = explode(',',$user->country_work_experience);
+
+        $languages = Language::pluck('language_name', 'id');
+
+        $reading_languages = explode(',',$user->language_reading);
+        $speaking_languages = explode(',',$user->language_speaking);
+        $writing_languages = explode(',',$user->language_writing);    
+        
+        $educations = Education::where('user_id', $user->id)->get();     
+        $promotions = Promotion::where('user_id', $user->id)->get();     
+        $employments = Employment::where('user_id', $user->id)->get();
+
         $user->load('department', 'roles');
 
-        return view('admin.users.edit', compact('departments', 'roles', 'user'));
+        return view('admin.users.edit', compact('departments', 'roles', 'user','countries','selected_countries','languages','reading_languages','speaking_languages','writing_languages','educations','employments','promotions'));
     }
 
     public function update(UpdateUserRequest $request, User $user)
     {
-        $user->update($request->all());
+        $data = $request->all();
+        $data['language_reading'] = implode(',',$request->language_reading);
+        $data['language_writing'] = implode(',',$request->language_writing);
+        $data['language_speaking'] = implode(',',$request->language_speaking);   
+
+        $data['country_work_experience'] = implode(',',$data['country_work_experience']);
+
+        $educations =  $data['education'];
+        $employments = $data['employment'];
+        $promotions = $data['promotion'];        
+        unset($data['education']);
+        unset($data['employment']);
+        unset($data['promotion']);
+
+        $user->update($data);
         $user->roles()->sync($request->input('roles', []));
         if ($request->input('image', false)) {
             if (!$user->image || $request->input('image') !== $user->image->file_name) {
@@ -84,6 +189,56 @@ class UsersController extends Controller
             }
         } elseif ($user->image) {
             $user->image->delete();
+        }
+
+        //employments
+        if($employments)
+        {
+            $del = Employment::where('user_id',$user->id)->delete();
+            foreach($employments as $employment)
+            {
+                $data = array(
+                    "user_id" => $user->id,
+                    "company_name" => $employment['company_name'],
+                    "designation" => $employment['designation'],
+                    "start_date" => $employment['start_date'],
+                    "end_date" => $employment['end_date'],
+                );
+                $emp = Employment::create($data);                
+            }
+        }
+        //promotions
+        if($promotions)
+        {
+            $del = Promotion::where('user_id',$user->id)->delete();
+            foreach($promotions as $promotion)
+            {
+                $data = array(
+                    "user_id" => $user->id,
+                    "promotion_date" => $promotion['promotion_date'],
+                    "designation" => $promotion['designation'],
+                );
+                $pro = Promotion::create($data);                
+            }
+        }
+        //education
+        if($educations)
+        {
+            $del = Education::where('user_id',$user->id)->delete();
+            foreach($educations as $education)
+            {
+                $data = array(
+                    "user_id" => $user->id,
+                    "degree_name" => $education['degree_name'],
+                    "educational_institute" => $education['educational_institute'],
+                    "degree_duration" => $education['degree_duration'],
+                );
+                $edu = Education::create($data);
+                if(isset($education['degree_attachment']))
+                {
+                    $user->addMedia(storage_path('tmp/uploads/' . basename($education['degree_attachment'])))->toMediaCollection('degree_attachment');
+                }
+            }
         }
 
         if ($request->input('code_membership_attachment', false)) {
@@ -105,6 +260,14 @@ class UsersController extends Controller
         abort_if(Gate::denies('user_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $user->load('department', 'roles', 'departmentHeadDepartments', 'projectHeadProjects');
+
+        $user->job_duration = $this->getJobDuration($user->joining_date);
+
+        $user->language_reading = $this->getUserLaguages($user->language_reading);
+        $user->language_writing = $this->getUserLaguages($user->language_writing);
+        $user->language_speaking = $this->getUserLaguages($user->language_speaking);
+
+        $user->country_work_experience = $this->getCountriesName($user->country_work_experience);
 
         return view('admin.users.show', compact('user'));
     }
@@ -136,4 +299,54 @@ class UsersController extends Controller
 
         return response()->json(['id' => $media->id, 'url' => $media->getUrl()], Response::HTTP_CREATED);
     }
+
+    public function getJobDuration($joinig_date){
+        $start_date = new DateTime($joinig_date);
+        $since_start = $start_date->diff(new DateTime());
+        $duration = "";
+        if($since_start->y != 0)
+        {
+            $duration = $duration.$since_start->y.' Year(s) ';
+        }
+         if($since_start->m != 0)
+        {
+            $duration = $duration.$since_start->m.' Month(s) ';
+        }
+         if($since_start->d != 0)
+        {
+            $duration = $duration.$since_start->d.' Day(s) ';
+        }        
+        return $duration=="" ? "N/A" : $duration;
+    }
+
+    public function getUserLaguages($languages){
+        $languages_id = explode(',',$languages);
+        $temp_languages = Language::whereIn('id',$languages_id)->pluck('language_name');
+        $translated_languages = '';
+        foreach($temp_languages as $key=>$language)
+        {
+            $translated_languages .= $language;
+            if(isset($temp_languages[$key+1]))
+            {
+                $translated_languages .= ', ';
+            }
+        }
+        return $translated_languages;
+    }
+
+    public function getCountriesName($names){
+        $countries_ids = explode(',',$names);
+        $temp_countries = Country::whereIn('id',$countries_ids)->pluck('name');
+        $translated_names = '';
+        foreach($temp_countries as $key=>$country)
+        {
+            $translated_names .= $country;
+            if(isset($temp_countries[$key+1]))
+            {
+                $translated_names .= ', ';
+            }
+        }
+        return $translated_names;
+    }
+    
 }

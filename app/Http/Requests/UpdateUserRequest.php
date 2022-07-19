@@ -39,6 +39,7 @@ class UpdateUserRequest extends FormRequest
             'employee_code' => [
                 'string',
                 'required',
+                'unique:users,employee_code,' . request()->route('user')->id,
             ],
             'father_name' => [
                 'string',
