@@ -12,6 +12,7 @@ use Gate;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\Project;
 
 class SubcontractorController extends Controller
 {
@@ -77,7 +78,18 @@ class SubcontractorController extends Controller
     {
         abort_if(Gate::denies('subcontractor_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        return view('admin.subcontractors.show', compact('subcontractor'));
+        $projects = Project::pluck('sub_contractors','id');
+        $projects_ids = array();
+        foreach($projects as $id=>$project){
+            $temp = explode(',',$project);
+            if(in_array($subcontractor->id,$temp))
+            {
+                $projects_ids[] = $id;
+            }            
+        }
+        $projects = Project::whereIn('id',$projects_ids)->get();        
+
+        return view('admin.subcontractors.show', compact('subcontractor','projects'));
     }
 
     public function destroy(Subcontractor $subcontractor)
