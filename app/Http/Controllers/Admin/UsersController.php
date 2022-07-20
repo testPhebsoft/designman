@@ -267,9 +267,13 @@ class UsersController extends Controller
         $user->language_writing = $this->getUserLaguages($user->language_writing);
         $user->language_speaking = $this->getUserLaguages($user->language_speaking);
 
+        $educations = Education::where('user_id',$user->id)->get();
+        $promotions = Promotion::where('user_id',$user->id)->get();
+        $employment = Employment::where('user_id',$user->id)->get();
+
         $user->country_work_experience = $this->getCountriesName($user->country_work_experience);
 
-        return view('admin.users.show', compact('user'));
+        return view('admin.users.show', compact('user','educations','promotions','employment'));
     }
 
     public function destroy(User $user)
