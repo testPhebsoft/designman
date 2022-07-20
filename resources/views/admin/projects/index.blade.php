@@ -71,6 +71,9 @@
                             {{ trans('cruds.project.fields.implementation_date') }}
                         </th>
                         <th>
+                            {{ trans('cruds.project.fields.status') }}
+                        </th>
+                        <th>
                             {{ trans('cruds.project.fields.agreement_atachment') }}
                         </th>
                         <th>
@@ -131,6 +134,9 @@
                             </td>
                             <td>
                                 {{ $project->implementation_date ?? '' }}
+                            </td>
+                            <td>
+                                {{ App\Models\Project::STATUS_SELECT[$project->status] ?? '' }}
                             </td>
                             <td>
                                 @if($project->agreement_atachment)

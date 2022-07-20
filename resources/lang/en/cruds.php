@@ -247,6 +247,8 @@ return [
             'implementation_date_helper' => ' ',
             'agreement_atachment'        => 'Agreement Atachment',
             'agreement_atachment_helper' => ' ',
+            'status'                     => 'Status',
+            'status_helper'              => '',
         ],
     ],
     'milestone' => [

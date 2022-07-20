@@ -22,6 +22,14 @@ class Project extends Model implements HasMedia
         'Joint Venture' => 'Joint Venture',
     ];
 
+    public const STATUS_SELECT = [
+        'Active'      => 'Active',
+        'In Progress' => 'In Progress',
+        'Blocked'     => 'Blocked',
+        'Dispute'     => 'Dispute',
+        'Completed'   => 'Completed'
+    ];
+
     public $table = 'projects';
 
     protected $appends = [
@@ -54,6 +62,7 @@ class Project extends Model implements HasMedia
         'sub_contractors',
         'signing_date',
         'implementation_date',
+        'status',
         'created_at',
         'updated_at',
         'deleted_at',

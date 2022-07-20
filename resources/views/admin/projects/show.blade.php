@@ -161,6 +161,14 @@
                     </tr>
                     <tr>
                         <th>
+                            {{ trans('cruds.project.fields.status') }}
+                        </th>
+                        <td>
+                            {{ App\Models\Project::STATUS_SELECT[$project->status] ?? '' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
                             {{ trans('cruds.project.fields.agreement_atachment') }}
                         </th>
                         <td>

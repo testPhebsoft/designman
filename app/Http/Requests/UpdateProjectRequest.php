@@ -28,6 +28,7 @@ class UpdateProjectRequest extends FormRequest
             'project_code' => [
                 'string',
                 'required',
+                'unique:projects,project_code,' . request()->route('project')->id,
             ],
             'location' => [
                 'string',
@@ -46,6 +47,9 @@ class UpdateProjectRequest extends FormRequest
                 'nullable',
             ],
             'handled_as' => [
+                'required',
+            ],
+            'status' => [
                 'required',
             ],
             'venture_firm' => [

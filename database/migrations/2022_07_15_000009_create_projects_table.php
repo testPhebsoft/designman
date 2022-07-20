@@ -20,6 +20,7 @@ class CreateProjectsTable extends Migration
             $table->string('estimated_duration')->nullable();
             $table->string('employees_assigned')->nullable();
             $table->string('handled_as');
+            $table->string('status');
             $table->string('venture_firm')->nullable();
             $table->string('sub_contractors')->nullable();
             $table->date('signing_date')->nullable();

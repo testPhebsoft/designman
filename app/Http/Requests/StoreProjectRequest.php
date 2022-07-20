@@ -28,6 +28,7 @@ class StoreProjectRequest extends FormRequest
             'project_code' => [
                 'string',
                 'required',
+                'unique:projects'
             ],
             'location' => [
                 'string',
@@ -45,6 +46,9 @@ class StoreProjectRequest extends FormRequest
                 'nullable',
             ],
             'handled_as' => [
+                'required',
+            ],
+            'status' => [
                 'required',
             ],
             'venture_firm' => [                
