@@ -12,6 +12,7 @@ use Gate;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\Project;
 
 class JointVentureFirmController extends Controller
 {
@@ -62,7 +63,18 @@ class JointVentureFirmController extends Controller
     {
         abort_if(Gate::denies('joint_venture_firm_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        return view('admin.jointVentureFirms.show', compact('jointVentureFirm'));
+        $projects = Project::pluck('venture_firm','id');
+        $projects_ids = array();
+        foreach($projects as $id=>$project){
+            $temp = explode(',',$project);
+            if(in_array($jointVentureFirm->id,$temp))
+            {
+                $projects_ids[] = $id;
+            }            
+        }
+        $projects = Project::whereIn('id',$projects_ids)->get();    
+
+        return view('admin.jointVentureFirms.show', compact('jointVentureFirm','projects'));
     }
 
     public function destroy(JointVentureFirm $jointVentureFirm)
