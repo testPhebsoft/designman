@@ -26,10 +26,10 @@ class UsersController extends Controller
     use MediaUploadingTrait;
 
     public function index()
-    {
+    {        
         abort_if(Gate::denies('user_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $users = User::with(['department', 'roles', 'media'])->get();
+        $users = User::with(['department', 'roles', 'media'])->get();        
 
         foreach($users as $user){
             $user->country_work_experience = $this->getCountriesName($user->country_work_experience);
@@ -257,7 +257,7 @@ class UsersController extends Controller
 
     public function show(User $user)
     {
-        abort_if(Gate::denies('user_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('user_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');        
 
         $user->load('department', 'roles', 'departmentHeadDepartments', 'projectHeadProjects');
 
@@ -271,7 +271,7 @@ class UsersController extends Controller
         $promotions = Promotion::where('user_id',$user->id)->get();
         $employment = Employment::where('user_id',$user->id)->get();
 
-        $user->country_work_experience = $this->getCountriesName($user->country_work_experience);
+        $user->country_work_experience = $this->getCountriesName($user->country_work_experience);        
 
         return view('admin.users.show', compact('user','educations','promotions','employment'));
     }

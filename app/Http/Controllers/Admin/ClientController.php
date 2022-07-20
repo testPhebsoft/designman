@@ -80,7 +80,11 @@ class ClientController extends Controller
 
         $no_of_projects = Project::where('client_id',$client->id)->count();
 
-        return view('admin.clients.show', compact('client','no_of_projects'));
+        $completed = Project::where([['client_id', $client->id],['status', 'Completed']])->get();
+        $working = Project::where([['client_id', $client->id],['status', 'In Progress']])->orWhere([['client_id', $client->id],['status', 'Active']])->get();
+        $disputes = Project::where([['client_id', $client->id],['status', 'Dispute']])->get();
+
+        return view('admin.clients.show', compact('client','no_of_projects','completed','working','disputes'));
     }
 
     public function destroy(Client $client)
