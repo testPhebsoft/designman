@@ -98,6 +98,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('joint-venture-firms/media', 'JointVentureFirmController@storeMedia')->name('joint-venture-firms.storeMedia');
     Route::post('joint-venture-firms/ckmedia', 'JointVentureFirmController@storeCKEditorImages')->name('joint-venture-firms.storeCKEditorImages');
     Route::resource('joint-venture-firms', 'JointVentureFirmController');
+
+    // Dispute
+    Route::delete('disputes/destroy', 'DisputeController@massDestroy')->name('disputes.massDestroy');
+    Route::post('disputes/media', 'DisputeController@storeMedia')->name('disputes.storeMedia');
+    Route::post('disputes/ckmedia', 'DisputeController@storeCKEditorImages')->name('disputes.storeCKEditorImages');
+    Route::resource('disputes', 'DisputeController');
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

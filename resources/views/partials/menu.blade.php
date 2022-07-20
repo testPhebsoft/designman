@@ -155,6 +155,18 @@
                         </a>
                     </li>
                 @endcan
+                @can('dispute_access')
+                    <li class="nav-item">
+                        <a href="{{ route("admin.disputes.index") }}" class="nav-link {{ request()->is("admin/disputes") || request()->is("admin/disputes/*") ? "active" : "" }}">
+                            <i class="fa-fw nav-icon fas fa-cogs">
+
+                            </i>
+                            <p>
+                                {{ trans('cruds.dispute.title') }}
+                            </p>
+                        </a>
+                    </li>
+                @endcan
                 @can('milestone_access')
                     <li class="nav-item">
                         <a href="{{ route("admin.milestones.index") }}" class="nav-link {{ request()->is("admin/milestones") || request()->is("admin/milestones/*") ? "active" : "" }}">
