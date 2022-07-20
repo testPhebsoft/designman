@@ -28,6 +28,7 @@ class StoreClientRequest extends FormRequest
             'client_code' => [
                 'string',
                 'required',
+                'unique:clients'
             ],
             'client_address' => [
                 'string',

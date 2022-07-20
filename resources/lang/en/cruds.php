@@ -176,6 +176,7 @@ return [
             'city_helper'           => ' ',
             'mou'                   => 'MOU',
             'mou_helper'            => ' ',
+            'number_of_projects'    => 'Number of Projects'
         ],
     ],
     'projectCategory' => [

@@ -28,6 +28,7 @@ class UpdateClientRequest extends FormRequest
             'client_code' => [
                 'string',
                 'required',
+                'unique:clients,client_code,' . request()->route('client')->id,
             ],
             'client_address' => [
                 'string',

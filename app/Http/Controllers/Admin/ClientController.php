@@ -12,6 +12,7 @@ use Gate;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\Project;
 
 class ClientController extends Controller
 {
@@ -77,7 +78,9 @@ class ClientController extends Controller
     {
         abort_if(Gate::denies('client_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        return view('admin.clients.show', compact('client'));
+        $no_of_projects = Project::where('client_id',$client->id)->count();
+
+        return view('admin.clients.show', compact('client','no_of_projects'));
     }
 
     public function destroy(Client $client)

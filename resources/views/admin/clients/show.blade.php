@@ -91,6 +91,14 @@
                             @endif
                         </td>
                     </tr>
+                    <tr>
+                        <th>
+                            {{ trans('cruds.client.fields.number_of_projects') }}
+                        </th>
+                        <td>
+                           0
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <div class="form-group">
