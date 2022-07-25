@@ -19,6 +19,7 @@ use App\Models\JointVentureFirm;
 use App\Models\Subcontractor;
 use App\Models\Role;
 use DB;
+use App\Models\NatureOfJointVenture;
 
 class ProjectController extends Controller
 {
@@ -66,17 +67,32 @@ class ProjectController extends Controller
     }
 
     public function store(StoreProjectRequest $request)
-    { 
-        $data = $request->except('sub_contractors','employees_assigned','venture_firm');
+    {         
+        $data = $request->except('sub_contractors','employees_assigned','venture_firm','nature_of_joint_venture');        
         
         $data['sub_contractors'] = implode(',',$request->sub_contractors);
         $data['employees_assigned'] = implode(',',$request->employees_assigned);
         $data['venture_firm'] = implode(',',$request->venture_firm);
+
+        $nature_of_joint_venture = $request->nature_of_joint_venture;
         
         $project = Project::create($data);
 
         if ($request->input('agreement_atachment', false)) {
             $project->addMedia(storage_path('tmp/uploads/' . basename($request->input('agreement_atachment'))))->toMediaCollection('agreement_atachment');
+        }
+
+        if($nature_of_joint_venture)
+        {
+            foreach($nature_of_joint_venture as $ven)
+            {   
+                $arr = array(
+                    "project_id" => $project->id,
+                    "venture_id" => $ven['venture_id'],
+                    "nature" => $ven['nature'],
+                );
+                $joint_ven = NatureOfJointVenture::create($arr);
+            }
         }
 
         if ($media = $request->input('ck-media', false)) {
@@ -96,14 +112,68 @@ class ProjectController extends Controller
 
         $project_heads = User::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
+        $ventures = NatureOfJointVenture::where('project_id',$project->id)->get();
+
+        $project->venture_firm = explode(',',$project->venture_firm);              
+
+        $project->employees_assigned = explode(',',$project->employees_assigned);           
+
+        $venture_firms = JointVentureFirm::pluck('firm_name','id');
+        $md_class = 'col-md-12';
+        if(count($ventures) == 2)
+        {
+            $md_class = 'col-md-6';
+        }
+        else if(count($ventures) == 3){
+            $md_class = 'col-md-4';
+        }
+        
+        $emp_role_id = Role::where('title','LIKE','%ad%')->pluck('id')->first();
+        $employees = array();
+        if($emp_role_id)
+        {
+            $emp_ids = DB::table('role_user')->where('role_id', $emp_role_id)->pluck('user_id');            
+            if($emp_ids)
+            {
+                $employees = User::whereIn('id',$emp_ids)->pluck('name', 'id');
+            }            
+        }  
+
+        $project->sub_contractors = explode(',',$project->sub_contractors); 
+        
+        $subcontractors = Subcontractor::pluck('name','id');
+
         $project->load('client', 'category', 'project_head');
 
-        return view('admin.projects.edit', compact('categories', 'clients', 'project', 'project_heads'));
+        $users = User::pluck('name','id');
+
+        return view('admin.projects.edit', compact('categories', 'clients', 'project', 'project_heads','ventures','md_class','venture_firms','subcontractors','employees'));
     }
 
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        $project->update($request->all());
+        $data = $request->except('sub_contractors','employees_assigned','venture_firm','nature_of_joint_venture');        
+        
+        $data['sub_contractors'] = implode(',',$request->sub_contractors);
+        $data['employees_assigned'] = implode(',',$request->employees_assigned);
+        $data['venture_firm'] = implode(',',$request->venture_firm);
+
+        $nature_of_joint_venture = $request->nature_of_joint_venture;
+
+        $project->update($data);
+
+        if($nature_of_joint_venture)
+        {
+            foreach($nature_of_joint_venture as $ven)
+            {   
+                $arr = array(
+                    "project_id" => $project->id,
+                    "venture_id" => $ven['venture_id'],
+                    "nature" => $ven['nature'],
+                );
+                $joint_ven = NatureOfJointVenture::create($arr);
+            }
+        }
 
         if ($request->input('agreement_atachment', false)) {
             if (!$project->agreement_atachment || $request->input('agreement_atachment') !== $project->agreement_atachment->file_name) {
@@ -127,9 +197,15 @@ class ProjectController extends Controller
 
         $project->load('client', 'category', 'project_head');
 
+        $ventures = NatureOfJointVenture::where('project_id',$project->id)->get();
+        foreach($ventures as $venture)
+        {
+            $joint_venture = JointVentureFirm::find($venture->venture_id);
+            $venture->firm_name = $joint_venture->firm_name;
+            $venture->code = $joint_venture->code;
+        }
         
-
-        return view('admin.projects.show', compact('project'));
+        return view('admin.projects.show', compact('project','ventures'));
     }
 
     public function destroy(Project $project)

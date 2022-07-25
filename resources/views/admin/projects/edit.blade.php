@@ -100,7 +100,11 @@
             </div>
             <div class="form-group">
                 <label for="employees_assigned">{{ trans('cruds.project.fields.employees_assigned') }}</label>
-                <input class="form-control {{ $errors->has('employees_assigned') ? 'is-invalid' : '' }}" type="text" name="employees_assigned" id="employees_assigned" value="{{ old('employees_assigned', $project->employees_assigned) }}">
+                <select multiple class="form-control select2 select2_multiple {{ $errors->has('employees_assigned') ? 'is-invalid' : '' }}" name="employees_assigned[]" id="employees_assigned">
+                    @foreach($employees as $id => $employee)
+                        <option value="{{ $id }}" {{ in_array($id,$project->employees_assigned) ? 'selected' : '' }}>{{ $employee }}</option>
+                    @endforeach
+                </select>   
                 @if($errors->has('employees_assigned'))
                     <span class="text-danger">{{ $errors->first('employees_assigned') }}</span>
                 @endif
@@ -133,15 +137,35 @@
             </div>
             <div class="form-group">
                 <label for="venture_firm">{{ trans('cruds.project.fields.venture_firm') }}</label>
-                <input class="form-control {{ $errors->has('venture_firm') ? 'is-invalid' : '' }}" type="text" name="venture_firm" id="venture_firm" value="{{ old('venture_firm', $project->venture_firm) }}">
+                <select multiple class="form-control venture_firm select2 select2_multiple {{ $errors->has('venture_firm') ? 'is-invalid' : '' }}" name="venture_firm[]" id="venture_firm">
+                    @foreach($venture_firms as $id => $venture_firm)
+                        <option value="{{ $id }}" {{ in_array($id,$project->venture_firm) ? 'selected' : '' }}>{{ $venture_firm }}</option>
+                    @endforeach
+                </select>
                 @if($errors->has('venture_firm'))
                     <span class="text-danger">{{ $errors->first('venture_firm') }}</span>
                 @endif
                 <span class="help-block">{{ trans('cruds.project.fields.venture_firm_helper') }}</span>
             </div>
+              <!--venture firm textareas-->
+              <div class="form-group" id="venture_nature">  
+                <div class="row">
+                    @foreach($ventures as $key=>$venture)
+                        <div class="{{$md_class}}">
+                            <input type="hidden" name="nature_of_joint_venture[{{$key}}][venture_id]" value="{{$venture->venture_id}}">
+                            <textarea class="form-control" placeholder="Nature of Venture" name="nature_of_joint_venture[{{$key}}][nature]">{{$venture->nature}}</textarea>
+                        </div>
+                    @endforeach
+                </div>                                              
+              </div>
+              <!--venture firm ends textareas-->
             <div class="form-group">
-                <label for="sub_contractors">{{ trans('cruds.project.fields.sub_contractors') }}</label>
-                <input class="form-control {{ $errors->has('sub_contractors') ? 'is-invalid' : '' }}" type="text" name="sub_contractors" id="sub_contractors" value="{{ old('sub_contractors', $project->sub_contractors) }}">
+                <label for="sub_contractors">{{ trans('cruds.project.fields.sub_contractors') }}</label>                
+                <select multiple class="form-control select2 select2_multiple {{ $errors->has('sub_contractors') ? 'is-invalid' : '' }}" name="sub_contractors[]" id="sub_contractors">
+                    @foreach($subcontractors as $id => $subcontractor)
+                        <option value="{{ $id }}" {{ in_array($id,$project->sub_contractors) ? 'selected' : '' }}>{{ $subcontractor }}</option>
+                    @endforeach
+                </select>  
                 @if($errors->has('sub_contractors'))
                     <span class="text-danger">{{ $errors->first('sub_contractors') }}</span>
                 @endif
@@ -200,6 +224,46 @@
 
 @section('scripts')
 <script>
+
+        $(".select2_multiple").select2({
+            placeholder: "Please Select",
+            allowClear: true
+        });
+
+        $(document).on('change','.venture_firm',function(){
+            var val = $(this).val();
+            ventures = $('.venture_firm').select2('data');            
+            setVentureFirms(val.length ,ventures);
+        });
+
+        function setVentureFirms(length ,ventures){
+            var md_class = 'col-md-12';
+            if(length === 0)
+            {
+                $('#venture_nature').html('');
+                return;
+            }
+            if(length === 2)
+            {
+                md_class = 'col-md-6';
+            }
+            else if(length === 3)
+            {
+                md_class = 'col-md-4';
+            }
+            else{
+                md_class = 'col-md-12';
+            }
+            
+            var html = '<div class="row">';
+            for(var i=0; i<length; i++)
+            {
+                html = html + '<div class="'+md_class+'"><input type="hidden" name="nature_of_joint_venture['+i+'][venture_id]" value="'+ventures[i].id+'"><textarea class="form-control" placeholder="Nature of '+ventures[i].text+'" name="nature_of_joint_venture['+i+'][nature]"></textarea></div>';
+            }
+            html = html + '</div>';
+            $('#venture_nature').html(html);
+        }//end of setVentureFirms
+
     $(document).ready(function () {
   function SimpleUploadAdapter(editor) {
     editor.plugins.get('FileRepository').createUploadAdapter = function(loader) {

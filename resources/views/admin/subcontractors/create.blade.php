@@ -41,7 +41,7 @@
                 @endif
                 <span class="help-block">{{ trans('cruds.subcontractor.fields.contract_person_helper') }}</span>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label for="start_date">{{ trans('cruds.subcontractor.fields.start_date') }}</label>
                 <input class="form-control date {{ $errors->has('start_date') ? 'is-invalid' : '' }}" type="text" name="start_date" id="start_date" value="{{ old('start_date') }}">
                 @if($errors->has('start_date'))
@@ -65,7 +65,7 @@
                     <span class="text-danger">{{ $errors->first('agreement') }}</span>
                 @endif
                 <span class="help-block">{{ trans('cruds.subcontractor.fields.agreement_helper') }}</span>
-            </div>
+            </div> -->
             <div class="form-group">
                 <label for="assignment_value">{{ trans('cruds.subcontractor.fields.assignment_value') }}</label>
                 <input class="form-control {{ $errors->has('assignment_value') ? 'is-invalid' : '' }}" type="text" name="assignment_value" id="assignment_value" value="{{ old('assignment_value', '') }}">

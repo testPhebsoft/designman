@@ -136,7 +136,7 @@
             </div>
             <div class="form-group">
                 <label for="venture_firm">{{ trans('cruds.project.fields.venture_firm') }}</label>
-                <select multiple class="form-control select2 select2_multiple {{ $errors->has('venture_firm') ? 'is-invalid' : '' }}" name="venture_firm[]" id="venture_firm">
+                <select multiple class="form-control venture_firm select2 select2_multiple {{ $errors->has('venture_firm') ? 'is-invalid' : '' }}" name="venture_firm[]" id="venture_firm">
                     @foreach($venture_firms as $id => $venture_firm)
                         <option value="{{ $id }}" {{ old('venture_firm') == $id ? 'selected' : '' }}>{{ $venture_firm }}</option>
                     @endforeach
@@ -146,6 +146,11 @@
                 @endif
                 <span class="help-block">{{ trans('cruds.project.fields.venture_firm_helper') }}</span>
             </div>
+            <!--venture firm textareas-->
+            <div class="form-group" id="venture_nature">
+                                                
+            </div>
+            <!--venture firm ends textareas-->
             <div class="form-group">
                 <label for="sub_contractors">{{ trans('cruds.project.fields.sub_contractors') }}</label>
                 <select multiple class="form-control select2 select2_multiple {{ $errors->has('sub_contractors') ? 'is-invalid' : '' }}" name="sub_contractors[]" id="sub_contractors">
@@ -218,9 +223,39 @@
             allowClear: true
         });
 
-        $(document).on('change','.select2_multiple',function(){
-            console.log('seleted are ',$(this).val());
-        })
+        $(document).on('change','.venture_firm',function(){
+            var val = $(this).val();
+            ventures = $('.venture_firm').select2('data');            
+            setVentureFirms(val.length ,ventures);
+        });
+
+        function setVentureFirms(length ,ventures){
+            var md_class = 'col-md-12';
+            if(length === 0)
+            {
+                $('#venture_nature').html('');
+                return;
+            }
+            if(length === 2)
+            {
+                md_class = 'col-md-6';
+            }
+            else if(length === 3)
+            {
+                md_class = 'col-md-4';
+            }
+            else{
+                md_class = 'col-md-12';
+            }
+            
+            var html = '<div class="row">';
+            for(var i=0; i<length; i++)
+            {
+                html = html + '<div class="'+md_class+'"><input type="hidden" name="nature_of_joint_venture['+i+'][venture_id]" value="'+ventures[i].id+'"><textarea class="form-control" placeholder="Nature of '+ventures[i].text+'" name="nature_of_joint_venture['+i+'][nature]"></textarea></div>';
+            }
+            html = html + '</div>';
+            $('#venture_nature').html(html);
+        }//end of setVentureFirms
 
   function SimpleUploadAdapter(editor) {
     editor.plugins.get('FileRepository').createUploadAdapter = function(loader) {

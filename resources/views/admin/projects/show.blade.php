@@ -1,4 +1,28 @@
 @extends('layouts.admin')
+
+@section('styles')
+
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    #venture_table td, #venture_table th {
+        border: 1px solid #dddddd;        
+        text-align: center;
+        padding: 8px;
+
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style>
+
+@endsection
+
 @section('content')
 
 <div class="card">
@@ -189,6 +213,52 @@
         </div>
     </div>
 </div>
+
+
+<div class="card">
+    <div class="card-header">
+        {{ trans('global.relatedData') }}
+    </div>
+    <ul class="nav nav-tabs" role="tablist" id="relationship-tabs">       
+        @if(count($ventures) != 0)
+        <li class="nav-item">
+            <a class="nav-link" href="#ventures" role="tab" data-toggle="tab">
+                Ventures
+            </a>
+        </li>
+        @endif 
+    </ul>
+    <div class="tab-content">       
+        <div class="tab-pane" role="tabpanel" id="ventures">
+            <table id="venture_table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th>Nature</th>                       
+                        <th></th>                    
+                    </tr> 
+                </thead>   
+                <tbody>
+                    @foreach($ventures as $venture)
+                    <tr>
+                        <td>{{ $venture->firm_name }}</td>
+                        <td>{{ $venture->code }}</td>
+                        <td>{{ $venture->nature }}</td>                       
+                        <td>
+                            <a href="{{URL::to('/admin/joint-venture-firms/')}}/{{$venture->venture_id}}" target="_blank" class="btn btn-sm btn-info">Details</a>
+                        </td>
+                    </tr>
+                    @endforeach                    
+                </tbody>            
+            </table>
+        </div>
+
+        
+    </div>
+</div>
+
+
 
 
 

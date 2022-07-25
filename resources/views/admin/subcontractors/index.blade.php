@@ -37,7 +37,7 @@
                         <th>
                             {{ trans('cruds.subcontractor.fields.contract_person') }}
                         </th>
-                        <th>
+                        <!-- <th>
                             {{ trans('cruds.subcontractor.fields.start_date') }}
                         </th>
                         <th>
@@ -45,7 +45,7 @@
                         </th>
                         <th>
                             {{ trans('cruds.subcontractor.fields.agreement') }}
-                        </th>
+                        </th> -->
                         <th>
                             {{ trans('cruds.subcontractor.fields.assignment_value') }}
                         </th>
@@ -75,7 +75,7 @@
                             <td>
                                 {{ $subcontractor->contract_person ?? '' }}
                             </td>
-                            <td>
+                            <!-- <td>
                                 {{ $subcontractor->start_date ?? '' }}
                             </td>
                             <td>
@@ -87,7 +87,7 @@
                                         {{ trans('global.view_file') }}
                                     </a>
                                 @endif
-                            </td>
+                            </td> -->
                             <td>
                                 {{ $subcontractor->assignment_value ?? '' }}
                             </td>

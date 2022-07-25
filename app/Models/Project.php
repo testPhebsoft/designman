@@ -25,8 +25,7 @@ class Project extends Model implements HasMedia
     public const STATUS_SELECT = [
         'Active'      => 'Active',
         'In Progress' => 'In Progress',
-        'Blocked'     => 'Blocked',
-        'Dispute'     => 'Dispute',
+        'Blocked'     => 'Blocked',        
         'Completed'   => 'Completed'
     ];
 
